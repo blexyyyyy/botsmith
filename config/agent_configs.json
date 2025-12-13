@@ -1,0 +1,111 @@
+{
+    "agents": [
+        {
+            "type": "autogen",
+            "params": {
+                "agent_id": "analyzer_1",
+                "name": "Analyzer",
+                "system_message": "Analyze requirements carefully.",
+                "llm_config": {
+                    "model": "llama3",
+                    "base_url": "http://localhost:11434/v1",
+                    "api_key": "ollama"
+                },
+                "agent_type": "conversable",
+                "capabilities": [
+                    "analysis"
+                ]
+            }
+        },
+        {
+            "type": "planner",
+            "params": {
+                "agent_id": "planner_1",
+                "agent_type": "logic",
+                "capabilities": [
+                    "planning"
+                ]
+            }
+        },
+        {
+            "type": "validator",
+            "params": {
+                "agent_id": "validator_1",
+                "agent_type": "logic",
+                "capabilities": [
+                    "validation"
+                ]
+            }
+        },
+        {
+            "type": "router",
+            "params": {
+                "agent_id": "router_1",
+                "agent_type": "logic",
+                "capabilities": [
+                    "routing"
+                ]
+            }
+        },
+        {
+            "type": "executor",
+            "params": {
+                "agent_id": "executor_1",
+                "agent_type": "logic",
+                "capabilities": [
+                    "execution"
+                ]
+            }
+        },
+        {
+            "type": "workflow_compiler",
+            "params": {
+                "agent_id": "compiler_1",
+                "agent_type": "logic",
+                "capabilities": [
+                    "workflow_compilation"
+                ]
+            }
+        },
+        {
+            "type": "workflow_executor",
+            "params": {
+                "agent_id": "executor_2",
+                "agent_type": "logic",
+                "capabilities": [
+                    "workflow_execution"
+                ]
+            }
+        },
+        {
+            "type": "cost_estimator",
+            "params": {
+                "agent_id": "cost_estimator_1",
+                "agent_type": "logic",
+                "capabilities": [
+                    "cost_estimation"
+                ]
+            }
+        },
+        {
+            "type": "security",
+            "params": {
+                "agent_id": "security_1",
+                "agent_type": "logic",
+                "capabilities": [
+                    "security_scan"
+                ]
+            }
+        },
+        {
+            "type": "workflow_optimizer",
+            "params": {
+                "agent_id": "optimizer_1",
+                "agent_type": "logic",
+                "capabilities": [
+                    "optimization"
+                ]
+            }
+        }
+    ]
+}
