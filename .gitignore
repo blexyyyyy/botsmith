@@ -17,7 +17,8 @@ pip-delete-this-directory.txt
 .env.local
 
 # IDEs
-.vscode/
+.vscode/*
+!.vscode/extensions.json
 .idea/
 
 # Testing
@@ -29,6 +30,7 @@ test_output.log
 e2e_failure_log.txt
 
 # Project specific
-generated/
-botsmith.db
+workspace/
+data/
 *.log
+*.db

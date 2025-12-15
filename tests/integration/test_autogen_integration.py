@@ -1,5 +1,7 @@
 from botsmith.core.base.autogen_agent import AutoGenAgent
 from botsmith.core.memory.manager import InMemoryMemoryManager
+from unittest.mock import patch
+from autogen import ConversableAgent # Assuming ConversableAgent is needed for patching
 
 llm_config = {
     "model": "llama3",
@@ -19,6 +21,9 @@ agent = AutoGenAgent(
     capabilities=["chat"],
 )
 
-result = agent.execute("Say hello in one sentence.", {})
-print(result)
-print(agent.get_performance_metrics())
+# Mock the ConversableAgent (or AutoGenAgent's internal agent)
+with patch("autogen.ConversableAgent.generate_reply", return_value="Hello! This is a mocked response."):
+    result = agent.execute("Say hello in one sentence.", {})
+
+print("Result:", result)
+assert result["response"] == "Hello! This is a mocked response."

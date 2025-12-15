@@ -1,0 +1,7 @@
+requests
+python-dotenv
+groq
+google-generativeai
+rich>=10.0.0
+fastapi
+uvicorn

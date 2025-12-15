@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "botsmith"
+version = "1.0.0"
+description = "AI-powered multi-agent bot generator"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Veeratna Matey", email = "veeratnazx06@gmail.com" }
+]
+
+dependencies = [
+    "requests",
+    "python-dotenv",
+    "groq",
+    "google-generativeai",
+    "rich>=10.0.0",
+    "fastapi",
+    "uvicorn",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["botsmith*"]
+exclude = ["tests*", "generated*", "generated_bots*"]
+
+[project.scripts]
+botsmith = "botsmith.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = ["generated", "generated_bots", ".venv"]

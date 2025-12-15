@@ -1,3 +1,18 @@
+Metadata-Version: 2.4
+Name: botsmith
+Version: 1.0.0
+Summary: AI-powered multi-agent bot generator
+Author-email: Veeratna Matey <veeratnazx06@gmail.com>
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: requests
+Requires-Dist: python-dotenv
+Requires-Dist: groq
+Requires-Dist: google-generativeai
+Requires-Dist: rich>=10.0.0
+Requires-Dist: fastapi
+Requires-Dist: uvicorn
+
 # BotSmith
 
 **A Governed Multi-Agent System for Building Bots from Natural Language**
@@ -74,6 +89,20 @@ Each stage is explicit, testable, and replaceable.
 - **Local inference** via Ollama
 - **Cloud-ready design** (Groq, Gemini, OpenAI supported via abstraction)
 
+## Project Structure
+
+```text
+botsmith/
+├── core/               # Interfaces, base classes, utilities
+├── agents/             # Specialized agents
+├── workflows/          # Workflow compiler and executor
+├── nlp/                # NLP parsing and intent normalization
+├── persistence/        # SQLite persistence layer
+├── factory/            # Agent and workflow factories
+├── tests/              # Unit, integration, end-to-end tests
+└── main.py
+```
+
 ## Example End-to-End Flow
 
 **User**: "Build a Python weather bot"
@@ -121,30 +150,14 @@ pytest tests/integration/test_end_to_end_creation.py
 - Governance pipeline implemented
 - NLP to execution fully wired
 - End-to-end tested
-- **UI and visualization**: Initial React/Vite UI with Tailwind CSS (`botsmith-ui`)
-- **API layer**: FastAPI implementation started
-- **CLI interface**: Basic CLI capabilities
 
-## Planned
+## Planned 
 
+- API layer (FastAPI)
 - Persistent agent memory
+- CLI interface
 - Workflow resume and replay
-- Advanced visualizations
-
-## Project Structure
-
-```text
-botsmith/
-├── core/               # Interfaces, base classes, utilities
-├── agents/             # Specialized agents
-├── workflows/          # Workflow compiler and executor
-├── nlp/                # NLP parsing and intent normalization
-├── persistence/        # SQLite persistence layer
-├── factory/            # Agent and workflow factories
-├── tests/              # Unit, integration, end-to-end tests
-├── botsmith-ui/        # React + Vite + Tailwind CSS Frontend
-└── main.py
-```
+- UI and visualization
 
 ## Why This Project Exists
 

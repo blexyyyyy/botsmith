@@ -13,8 +13,9 @@ from botsmith.factory.agent_factory import AgentFactory
 from botsmith.persistence.database import init_db
 from botsmith.persistence.repository import WorkflowRepository, AgentRepository
 from botsmith.persistence.models import AgentRecord
-from botsmith.core.memory.manager import InMemoryMemoryManager
+from botsmith.core.memory.sqlite_manager import SQLiteMemoryManager
 from botsmith.core.llm.wrapper import OllamaLLM
+from botsmith.tools.filesystem import FileSystemTool
 import botsmith.agents
 
 
@@ -23,13 +24,15 @@ def test_end_to_end_creation():
     
     # 1. Setup
     init_db()
-    llm = OllamaLLM()  # Real Ollama!
-    mm = InMemoryMemoryManager()
+    llm = OllamaLLM()
+    mm = SQLiteMemoryManager()
     factory = AgentFactory(llm, mm)
     workflow_repo = WorkflowRepository()
     agent_repo = AgentRepository()
     
-    # Helper to create and persist agent
+    fs = FileSystemTool(base_dir="generated_bots")
+
+    # [omitted agent creation helper...]
     def create_and_save_agent(agent_type: str, agent_id: str, capabilities: list = None):
         config = {"agent_id": agent_id, "agent_type": "logic", "capabilities": capabilities or []}
         agent = factory.create_agent({"type": agent_type, "params": config})
@@ -52,6 +55,7 @@ def test_end_to_end_creation():
     cost_estimator = create_and_save_agent("cost_estimator", "cost_main", ["cost_estimation"])
     security = create_and_save_agent("security", "sec_main", ["security_scan"])
     optimizer = create_and_save_agent("workflow_optimizer", "opt_main", ["optimization"])
+    project_scaffold = create_and_save_agent("project_scaffold", "scaffold_main", ["scaffolding"])
     
     # Workflow Executor (manual instantiation for repo injection)
     from botsmith.agents.specialized.workflow_executor import WorkflowExecutor
@@ -118,6 +122,7 @@ def test_end_to_end_creation():
     exec_context = {
         **context,
         "dry_run": False,  # Actually generate code!
+        "filesystem": fs,
     }
     exec_result = workflow_executor.execute(workflow_def, initial_context=exec_context)
     
@@ -130,23 +135,15 @@ def test_end_to_end_creation():
     print(f"    -> Log: {len(exec_result.get('log', []))} steps executed")
     
     assert exec_result["status"] == "success"
+
+    # Verifying scaffolding
+    project_name = context["project_name"]
+    assert fs.exists(f"{project_name}/src/main.py")
+    assert fs.exists(f"{project_name}/requirements.txt")
+    assert fs.exists(f"{project_name}/README.md")
     
-    # 8. Verify generated code
-    from pathlib import Path
-    generated_dir = Path(__file__).resolve().parent.parent.parent / "generated" / project_name
-    bot_file = generated_dir / "bot.py"
-    
-    if bot_file.exists():
-        print(f"\n[7] Generated Bot File: {bot_file}")
-        print(f"    -> File size: {bot_file.stat().st_size} bytes")
-        print("\n--- Generated Code Preview ---")
-        code = bot_file.read_text(encoding="utf-8")
-        # Show first 500 chars
-        preview = code[:500] + ("..." if len(code) > 500 else "")
-        print(preview)
-        print("--- End Preview ---")
-    else:
-        print(f"\n[!] Warning: Expected generated file not found at {bot_file}")
+    # Optional strict check
+    # assert exec_result["final_context"].get("scaffolded") is True
     
     print("\n=== End-to-End Test PASSED ===")
 
