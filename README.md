@@ -124,12 +124,26 @@ pytest tests/integration/test_end_to_end_creation.py
 - **UI and visualization**: Initial React/Vite UI with Tailwind CSS (`botsmith-ui`)
 - **API layer**: FastAPI implementation started
 - **CLI interface**: Basic CLI capabilities
+- Persistent agent memory
+- Advanced visualizations
 
 ## Planned
 
-- Persistent agent memory
-- Workflow resume and replay
-- Advanced visualizations
+- Dynamic Agent Synthesis
+
+- Role-Based LLM Selection
+
+- Adaptive Workflow Construction
+
+- Human-in-the-Loop Control Gates
+
+- Automated Validation & Debug Loops
+
+- Defensive Security & Safety Checks
+
+- Tool & Agent Registry System
+
+- Execution Transparency & Observability
 
 ## Project Structure
 
