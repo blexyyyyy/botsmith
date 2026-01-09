@@ -28,6 +28,10 @@ python main.py
 
 BotSmith is designed to be deterministic, observable, and safe by default.
 
+## Demo
+
+Watch the [BotSmith Demo Video](https://youtu.be/jQ32oL6eF_M) to see the system in action.
+
 ## Key Capabilities
 
 ### Natural Language Interface
