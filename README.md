@@ -134,6 +134,31 @@ pytest tests/integration/test_end_to_end_creation.py
 - **Adaptive Execution**: Real-time workflow adjustment based on tool feedback.
 - **Advanced visualization**: Enhanced pipeline and agent state monitoring.
 
+## Architecture & Verification
+
+BotSmith follows a strictly decoupled, local-first architecture designed for stability and auditability.
+
+### 🛠 Refined Structure
+- **Core Abstractions**: Foundational interfaces remain in `botsmith/core/`.
+- **Concrete Packages**: Driver-level logic is promote to `botsmith/llm/`, `botsmith/memory/`, and `botsmith/utils/`.
+- **Standardized Imports**: 100% absolute import paths ensure reliable module resolution.
+
+### 🧠 Advanced Memory Contract
+- **Policy-Gated**: Agents only *propose* state changes; `MemoryManager` enforces `MemoryPolicy`.
+- **Multi-Layer Persistence**: 
+  - `EXECUTION`: Ephemeral step state.
+  - `SESSION`: Workflow coordination.
+  - `PROJECT/USER`: SQLite-backed long-term storage (verified to survive restarts).
+
+### ✅ Verification Baseline
+All core systems are verified via automated integration suites:
+- **Persistence**: `test_agent_memory_persistence.py` confirms interaction logs route to disk.
+- **Workflow**: `test_workflow_execution.py` validates the full Factory -> Executor pipeline.
+- **Governance**: `test_governance_agents.py` verifies cost/security gates.
+
+---
+*Codebase frozen at `v1.0.0-audit-remediated`*
+
 ## Project Structure
 
 ```text
