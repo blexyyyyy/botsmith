@@ -1,10 +1,32 @@
 # BotSmith
 
+![Python](https://img.shields.io/badge/python-3.10+-blue)
+![Tests](https://img.shields.io/badge/tests-integration%20passing-brightgreen)
+![Status](https://img.shields.io/badge/status-stable-success)
+
 **A Governed Multi-Agent System for Building Bots from Natural Language**
 
 BotSmith is a modular, production-oriented multi-agent framework that converts natural language requests into planned, validated, governed, and executable workflows. It is designed to demonstrate how autonomous agents can be built safely, with strong separation of concerns, deterministic execution, and full observability.
 
 > This is not a prompt toy or a chat wrapper. BotSmith focuses on control, correctness, and extensibility.
+
+## Quick Start
+
+```bash
+git clone https://github.com/blexyyyyy/botsmith.git
+cd botsmith
+
+# Set environment
+export PYTHONPATH=$(pwd)
+
+# Run integration tests
+pytest tests/integration
+
+# Run a sample workflow
+python main.py
+```
+
+BotSmith is designed to be deterministic, observable, and safe by default.
 
 ## Key Capabilities
 
