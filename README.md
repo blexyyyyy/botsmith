@@ -1,14 +1,30 @@
 # BotSmith
 
-![Python](https://img.shields.io/badge/python-3.10+-blue)
-![Tests](https://img.shields.io/badge/tests-integration%20passing-brightgreen)
-![Status](https://img.shields.io/badge/status-stable-success)
+[![Python](https://img.shields.io/badge/python-3.10+-blue)](https://www.python.org)
+[![Tests](https://img.shields.io/badge/tests-integration%20passing-brightgreen)](#)
+[![Status](https://img.shields.io/badge/status-stable-success)](#)
+[![Demo](https://img.shields.io/badge/demo-watch%20video-red)](https://youtu.be/jQ32oL6eF_M)
 
 **A Governed Multi-Agent System for Building Bots from Natural Language**
 
 BotSmith is a modular, production-oriented multi-agent framework that converts natural language requests into planned, validated, governed, and executable workflows. It is designed to demonstrate how autonomous agents can be built safely, with strong separation of concerns, deterministic execution, and full observability.
 
-> This is not a prompt toy or a chat wrapper. BotSmith focuses on control, correctness, and extensibility.
+---
+
+## 🎥 See It In Action
+
+[![BotSmith Demo](https://img.youtube.com/vi/jQ32oL6eF_M/maxresdefault.jpg)](https://youtu.be/jQ32oL6eF_M)
+
+**[▶️ Watch Full Demo (YouTube)](https://youtu.be/jQ32oL6eF_M)** - See BotSmith orchestrate a multi-agent workflow from natural language to executable code.
+
+**What's demonstrated:**
+-  Natural language parsing & intent extraction
+- Multi-agent orchestration (Router → Planner → Validator → Executor)
+-  Governance gates (cost estimation, security scanning)
+- Real-time workflow visualization
+- Memory persistence & session management
+
+---
 
 ## Quick Start
 
