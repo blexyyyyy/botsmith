@@ -6,7 +6,8 @@ from ..interfaces.agent_interface import IAgent
 from ..interfaces.llm_interface import ILLMWrapper
 from ..interfaces.memory_interface import IMemoryManager
 from ..exceptions.custom_exceptions import AgentExecutionError
-from ..memory.models import AgentMemory
+from ..memory.models import AgentMemory, MemoryUpdateProposal, MemoryScope
+from ..memory.execution_context import ExecutionContext
 
 
 class BaseAgent(IAgent, ABC):
@@ -52,13 +53,22 @@ class BaseAgent(IAgent, ABC):
 
     def execute(self, task: str, context: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Safe execution wrapper with guaranteed persistence.
+        Safe execution wrapper with guaranteed persistence and scoped memory.
         """
         self._execution_count += 1
+        
+        # STEP 3: Execution Context (Ephemeral)
+        exec_context = ExecutionContext(agent_id=self.agent_id)
+        
         result = None
         success = False
 
         try:
+            # We pass the execution context into _execute if the subclass supports it,
+            # but for now we keep the interface IAgent for compatibility.
+            # Subclasses can access self._current_exec_context if needed.
+            self._current_exec_context = exec_context
+            
             result = self._execute(task, context)
             success = True
             self._success_count += 1
@@ -67,17 +77,42 @@ class BaseAgent(IAgent, ABC):
         except Exception as e:
             self._failure_count += 1
             result = str(e)
+            exec_context.add_error(result)
             raise AgentExecutionError(
                 f"Agent '{self.agent_id}' failed to execute task: {str(e)}"
             ) from e
 
         finally:
-            self._memory.interactions.append({
-                "task": task,
-                "result": result,
-                "success": success,
-            })
-            self._memory_manager.save_memory(self._memory)
+            # STEP 7: Propose interaction log to Session Memory
+            proposal = MemoryUpdateProposal(
+                key=f"interaction_{self._execution_count}",
+                value={
+                    "task": task,
+                    "result": result,
+                    "success": success,
+                    "exec_context": exec_context.to_dict()
+                },
+                confidence=1.0, # High confidence in own record
+                justification="Agent execution log",
+                suggested_scope=MemoryScope.SESSION,
+                source=f"agent:{self.agent_id}"
+            )
+            self._memory_manager.propose(proposal)
+            self._current_exec_context = None
+
+    def propose_memory_update(self, key: str, value: Any, confidence: float, justification: str, scope: MemoryScope = None):
+        """
+        STEP 7: Agents only PROPOSE updates.
+        """
+        proposal = MemoryUpdateProposal(
+            key=key,
+            value=value,
+            confidence=confidence,
+            justification=justification,
+            suggested_scope=scope,
+            source=f"agent:{self.agent_id}"
+        )
+        return self._memory_manager.propose(proposal)
 
     def _execute(self, task: str, context: Dict[str, Any]) -> Dict[str, Any]:
         """

@@ -1,0 +1,1 @@
+def test_import():\n    import weather-bot\n    assert True\n

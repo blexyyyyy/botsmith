@@ -1,24 +1,18 @@
-from typing import Optional
-from datetime import datetime
+# botsmith/core/memory/sqlite_manager.py
 
-from botsmith.core.interfaces.memory_interface import IMemoryManager
-from botsmith.core.memory.models import AgentMemory
+from typing import Optional, Any
+from .models import AgentMemory, MemoryScope, MemoryUpdateProposal
+from .manager import MemoryManager
 from botsmith.persistence.agent_memory_repository import AgentMemoryRepository
 
 
-class SQLiteMemoryManager(IMemoryManager):
+class SQLiteMemoryManager(MemoryManager):
     """
     Persistent memory manager backed by SQLite.
+    Inherits from the core MemoryManager to provide full 3-layer support.
     """
 
-    def __init__(self, db_path=None):
+    def __init__(self, db_path=None, session_id: str = "default_session"):
         self._repo = AgentMemoryRepository(db_path=db_path)
         self._repo.init_schema()
-
-    def load_memory(self, agent_id: str) -> Optional[AgentMemory]:
-        return self._repo.load(agent_id)
-
-    def save_memory(self, memory: AgentMemory) -> bool:
-        memory.last_updated = datetime.utcnow()
-        self._repo.save(memory)
-        return True
+        super().__init__(session_id=session_id, repository=self._repo)

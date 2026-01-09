@@ -1,32 +1,36 @@
 # botsmith/core/interfaces/memory_interface.py
 
 from abc import ABC, abstractmethod
-from typing import Optional
-from ..memory.models import AgentMemory
+from typing import Optional, Any
+from ..memory.models import AgentMemory, MemoryScope, MemoryUpdateProposal
 
 
 class IMemoryManager(ABC):
     """
-    Abstraction over agent memory storage.
-    Allows swapping in-memory, file-based, DB, or vector memory.
+    Abstraction over agent memory coordination.
+    Handles multiple memory layers and policy enforcement.
     """
 
     @abstractmethod
-    def save_memory(self, memory: AgentMemory) -> bool:
+    def propose(self, proposal: MemoryUpdateProposal) -> bool:
         """
-        Persist agent memory.
-
-        Returns:
-            True if successful, False otherwise
+        Propose a memory update. The manager decides if/where to store it.
         """
         raise NotImplementedError
 
     @abstractmethod
-    def load_memory(self, agent_id: str) -> Optional[AgentMemory]:
+    def read(self, scope: MemoryScope, key: str) -> Any:
         """
-        Load memory associated with an agent.
+        Read a value from a specific memory scope.
+        """
+        raise NotImplementedError
 
-        Returns:
-            AgentMemory if found, else None
-        """
+    @abstractmethod
+    def save_memory(self, memory: AgentMemory) -> bool:
+        """Persist agent memory (Legacy)."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def load_memory(self, agent_id: str) -> Optional[AgentMemory]:
+        """Load memory associated with an agent (Legacy)."""
         raise NotImplementedError

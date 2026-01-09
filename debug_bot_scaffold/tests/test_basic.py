@@ -1,0 +1,1 @@
+def test_import():\n    import debug_bot_scaffold\n    assert True\n

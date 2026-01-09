@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion';
-import { Download, Play, Sparkles } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Download, FileCode, Play, Sparkles, Terminal } from 'lucide-react';
 import { useState } from 'react';
 import { createEventSource } from './api/botsmithClient';
 import { AnimatedLogList } from './components/AnimatedLogList';
@@ -29,34 +29,28 @@ export const WorkflowVisualizer = () => {
         try {
             console.log("Generating with prompt:", prompt);
             createEventSource(prompt, projectName, (event) => {
-                // Handle different event types
                 switch (event.type) {
                     case 'step_start':
                         setCurrentStep(event.data.step);
                         setStepsStatus(prev => ({ ...prev, [event.data.step]: 'running' }));
                         break;
-
                     case 'step_complete':
-                        setStepsStatus(prev => ({
-                            ...prev,
-                            [event.data.step]: event.data.status // 'success' or 'failed'
-                        }));
+                        setStepsStatus(prev => ({ ...prev, [event.data.step]: event.data.status }));
                         break;
-
                     case 'log':
                         setLogs(prev => [...prev, event.data]);
                         break;
-
+                    case 'file_start':
+                        setLogs(prev => [...prev, { level: 'info', message: `Generating ${event.data.filename}...` }]);
+                        break;
                     case 'file_complete':
                         setFiles(prev => [...prev, event.data]);
                         break;
-
                     case 'done':
                         setIsBuilding(false);
                         setIsDone(event.data.status === 'success');
                         setCurrentStep(null);
                         break;
-
                     case 'error':
                         console.error("Stream Error:", event.data);
                         setLogs(prev => [...prev, { level: 'error', message: event.data.message }]);
@@ -69,98 +63,158 @@ export const WorkflowVisualizer = () => {
         }
     };
 
+    const showLanding = !isBuilding && !isDone;
+
     return (
-        <div className="min-h-screen bg-background text-white font-sans selection:bg-glow selection:text-black">
+        <div className="min-h-screen bg-[#0B0F19] text-gray-200 font-sans selection:bg-cyan-500/30 selection:text-cyan-200 relative overflow-hidden flex flex-col">
+
+            {/* Ambient Background Effect */}
+            <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_0%,_rgba(56,189,248,0.05),_transparent_50%)] z-0" />
+
             {/* HEADER */}
-            <header className="border-b border-gray-800 p-6 flex justify-between items-center bg-gray-900/50 backdrop-blur sticky top-0 z-50">
+            <header className="border-b border-gray-800/50 p-6 flex justify-between items-center bg-[#0B0F19]/80 backdrop-blur sticky top-0 z-50">
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded bg-gradient-to-br from-glow to-secondaryGlow flex items-center justify-center">
-                        <Sparkles className="text-black w-5 h-5" />
+                    <div className="w-8 h-8 rounded bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                        <Sparkles className="text-white w-5 h-5" />
                     </div>
-                    <h1 className="text-xl font-bold tracking-tight">BotSmith <span className="text-glow">Studio</span></h1>
+                    <h1 className="text-xl font-bold tracking-tight text-white">BotSmith <span className="text-cyan-400 font-light">Studio</span></h1>
                 </div>
-                <div className="text-sm text-gray-500 font-mono">v1.0.0</div>
+                <div className="flex items-center gap-4 text-xs font-mono text-gray-500">
+                    <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-green-500/50 animate-pulse" /> System Online</span>
+                    <span className="opacity-50">v1.0.0</span>
+                </div>
             </header>
 
-            {/* INPUT HERO */}
-            <div className="max-w-7xl mx-auto p-6 space-y-8">
-                {!isBuilding && !isDone && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex flex-col gap-4 max-w-2xl mx-auto mt-10 p-8 border border-gray-800 rounded-2xl bg-gray-900/30 box-glow"
-                    >
-                        <h2 className="text-2xl font-bold text-center">What are we building today?</h2>
-                        <textarea
-                            value={prompt}
-                            onChange={(e) => setPrompt(e.target.value)}
-                            placeholder="Describe your bot (e.g., 'A research agent that summarizes tech news from RSS feeds')"
-                            className="w-full h-32 bg-black/50 border border-gray-700 rounded-xl p-4 focus:border-glow focus:ring-1 focus:ring-glow outline-none transition-all resize-none font-mono text-sm"
-                        />
-                        <div className="flex gap-4">
-                            <input
-                                type="text"
-                                value={projectName}
-                                onChange={(e) => setProjectName(e.target.value)}
-                                placeholder="Project Name"
-                                className="flex-1 bg-black/50 border border-gray-700 rounded-lg p-3 focus:border-glow outline-none font-mono text-sm"
-                            />
-                            <button
-                                onClick={handleGenerate}
-                                disabled={!prompt}
-                                className="bg-glow text-black font-bold px-8 py-3 rounded-lg hover:bg-white transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                <Play size={18} fill="currentColor" />
-                                Generate
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
+            <main className="flex-1 relative z-10 w-full max-w-7xl mx-auto p-6 flex flex-col">
+                <AnimatePresence mode="wait">
 
-                {/* PIPELINE VISUALIZATION - Show if building or if we have any steps status (failed/success) */}
-                {(isBuilding || isDone || Object.keys(stepsStatus).length > 0) && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="space-y-6"
-                    >
-                        <PipelineVisualizer currentStep={currentStep} stepsStatus={stepsStatus} />
-
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
-                            {/* LEFT: LOGS */}
-                            <div className="lg:col-span-2 border border-gray-800 rounded-xl bg-black/40 overflow-hidden">
-                                <AnimatedLogList logs={logs} />
-                            </div>
-
-                            {/* RIGHT: FILES */}
-                            <div className="border border-gray-800 rounded-xl bg-black/40 overflow-hidden">
-                                <FileTree files={files} />
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-
-                {/* SUCCESS STATE */}
-                {isDone && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="flex justify-center mt-8 pb-10"
-                    >
-                        <button
-                            onClick={() => window.open(`http://localhost:8000/bot/download/${projectName}`, '_blank')}
-                            className="bg-success text-black font-bold px-10 py-4 rounded-full flex items-center gap-3 hover:bg-white box-glow transition-all transform hover:scale-105"
+                    {/* LANDING STATE */}
+                    {showLanding && (
+                        <motion.div
+                            key="landing"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20, filter: "blur(10px)" }}
+                            transition={{ duration: 0.5 }}
+                            className="flex-1 flex flex-col justify-center items-center min-h-[60vh] max-w-3xl mx-auto w-full"
                         >
-                            <Download size={20} />
-                            Download Bot Package
-                        </button>
-                    </motion.div>
-                )}
-                {/* DEBUG FOOTER */}
-                <div className="fixed bottom-0 left-0 right-0 bg-red-900/80 text-white text-xs p-2 font-mono flex justify-between">
-                    <span>STATUS: {isBuilding ? 'BUILDING' : 'IDLE'} | DONE: {isDone ? 'YES' : 'NO'} | STEPS: {Object.keys(stepsStatus).length} | LOGS: {logs.length} | PROMPT: {prompt.substring(0, 20)}</span>
-                </div>
-            </div>
+                            <div className="text-center space-y-6 mb-12">
+                                <h2 className="text-5xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500">
+                                    What are we building today?
+                                </h2>
+                                <p className="text-lg text-gray-400 max-w-lg mx-auto leading-relaxed">
+                                    Describe your autonomous agent in plain English. BotSmith will plan, architect, and deploy it for you.
+                                </p>
+                            </div>
+
+                            <div className="w-full space-y-4 bg-gray-900/40 p-1.5 rounded-2xl border border-gray-800 ring-1 ring-white/5 shadow-2xl backdrop-blur-sm">
+                                <textarea
+                                    value={prompt}
+                                    onChange={(e) => setPrompt(e.target.value)}
+                                    placeholder="e.g., 'Create a research agent that monitors Hacker News and summarizes trending AI topics to a markdown file...'"
+                                    className="w-full h-32 bg-[#0F1420] rounded-xl p-5 text-gray-100 placeholder-gray-600 outline-none resize-none font-mono text-sm leading-relaxed focus:bg-[#131926] transition-colors"
+                                    autoFocus
+                                />
+                                <div className="flex gap-2 p-1">
+                                    <div className="flex-1 bg-[#0F1420] rounded-lg border border-gray-800/50 group focus-within:border-cyan-500/50 transition-colors">
+                                        <input
+                                            type="text"
+                                            value={projectName}
+                                            onChange={(e) => setProjectName(e.target.value)}
+                                            placeholder="Project Name"
+                                            className="w-full h-full bg-transparent px-4 py-3 outline-none font-mono text-sm text-cyan-100 placeholder-gray-600"
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={handleGenerate}
+                                        disabled={!prompt}
+                                        className="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-8 py-3 rounded-lg transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)]"
+                                    >
+                                        <Play size={16} fill="currentColor" />
+                                        <span>Initialize</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {/* DASHBOARD STATE */}
+                    {!showLanding && (
+                        <motion.div
+                            key="dashboard"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                            className="space-y-8 w-full mt-4"
+                        >
+                            {/* Pipeline Section */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2 text-sm text-gray-400 font-mono uppercase tracking-widest pl-1">
+                                    <Terminal size={14} className="text-cyan-500" />
+                                    Execution Pipeline
+                                </div>
+                                <PipelineVisualizer currentStep={currentStep} stepsStatus={stepsStatus} />
+                            </div>
+
+                            {/* Main Grid */}
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
+
+                                {/* LOGS */}
+                                <div className="lg:col-span-2 border border-gray-800 rounded-xl bg-[#0F1420]/80 overflow-hidden flex flex-col shadow-xl">
+                                    <div className="p-4 border-b border-gray-800 bg-[#0F1420] flex items-center justify-between">
+                                        <div className="text-xs font-mono text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                                            <Terminal size={12} /> System Logs
+                                        </div>
+                                        <div className="flex gap-1.5">
+                                            <div className="w-2.5 h-2.5 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center text-[8px]">•</div>
+                                            <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/20 text-yellow-500 flex items-center justify-center text-[8px]">•</div>
+                                            <div className="w-2.5 h-2.5 rounded-full bg-green-500/20 text-green-500 flex items-center justify-center text-[8px]">•</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex-1 overflow-hidden relative font-mono text-sm">
+                                        <AnimatedLogList logs={logs} />
+                                    </div>
+                                </div>
+
+                                {/* FILES */}
+                                <div className="border border-gray-800 rounded-xl bg-[#0F1420]/80 overflow-hidden flex flex-col shadow-xl">
+                                    <div className="p-4 border-b border-gray-800 bg-[#0F1420] text-xs font-mono text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                                        <FileCode size={12} /> Workspace Artifacts
+                                    </div>
+                                    <div className="flex-1 overflow-hidden relative">
+                                        <FileTree files={files} />
+                                        {files.length === 0 && (
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-700 font-mono text-sm space-y-2">
+                                                <div className="w-8 h-8 rounded-full border border-gray-800 flex items-center justify-center">
+                                                    <div className="w-1 h-1 bg-gray-600 rounded-full animate-ping" />
+                                                </div>
+                                                <span>Waiting for filesystem events...</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {/* SUCCESS FOOTER */}
+                    {isDone && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
+                        >
+                            <button
+                                onClick={() => window.open(`http://localhost:8000/bot/download/${projectName}`, '_blank')}
+                                className="bg-green-500 text-black font-bold px-8 py-4 rounded-full flex items-center gap-3 hover:bg-white hover:scale-105 transition-all shadow-[0_0_40px_rgba(34,197,94,0.4)]"
+                            >
+                                <Download size={20} />
+                                Download {projectName} Package
+                            </button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </main>
         </div>
     );
 };

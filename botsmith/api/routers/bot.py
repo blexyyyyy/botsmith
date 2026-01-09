@@ -12,6 +12,10 @@ def create_bot(
 ):
     try:
         project_name = request.project_name or "api_generated_bot"
+        # Sanitize project name to ensure filesystem compatibility (especially for Windows)
+        # and Python package naming conventions (lowercase, underscores).
+        project_name = project_name.strip().lower().replace(" ", "_")
+
         result = app.create_bot(request.prompt, project_name)
         
         # Extract relevant info for response
@@ -49,8 +53,8 @@ async def download_bot(project_name: str, app: BotSmithApp = Depends(get_botsmit
     # Locate project - align with WorkflowExecutor logic
     norm_project_name = project_name.lower().replace(" ", "_")
     
-    # Executor uses 'workspace' relative to root
-    project_path = Path("workspace") / norm_project_name
+    # Executor uses 'generated' output
+    project_path = Path("generated") / norm_project_name
     
     if not project_path.exists():
         return Response(content="Project not found", status_code=404)

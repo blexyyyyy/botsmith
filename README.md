@@ -28,8 +28,10 @@ Translates intent to plan to workflow to execution deterministically.
 ### End-to-End Tested
 Full integration tests covering the complete lifecycle.
 
-### Persistence
-Workflow runs and execution logs stored via SQLite for auditability.
+### 3-Layer Memory System (State + Preferences + Persistence)
+- **Execution Context**: Ephemeral, step-level state for tools and reasoning.
+- **Session Memory**: Short-term, workflow-scoped coordination across agents.
+- **Long-Term Memory**: Persistent, policy-gated storage for user preferences and project knowledge.
 
 ## High-Level Architecture
 
@@ -42,7 +44,8 @@ graph TD
     E --> F[Workflow Compiler]
     F --> G[Optimizer / Cost / Security]
     G --> H[Workflow Executor]
-    H --> I[Persistence Layer]
+    H --> I[Memory Manager]
+    I --> J[(SQLite Persistence)]
 ```
 
 Each stage is explicit, testable, and replaceable.
@@ -71,6 +74,7 @@ Each stage is explicit, testable, and replaceable.
 - **NLPInterpreterAgent**: LLM-assisted semantic parsing, Schema validation, Confidence and ambiguity handling
 
 ### LLM Support
+- **Gated Memory**: Multi-layer scoped storage with policy-enforced writes.
 - **Local inference** via Ollama
 - **Cloud-ready design** (Groq, Gemini, OpenAI supported via abstraction)
 
@@ -117,33 +121,18 @@ pytest tests/integration/test_end_to_end_creation.py
 
 ## Current Status
 
-- Core engine complete
-- Governance pipeline implemented
-- NLP to execution fully wired
-- End-to-end tested
-- **UI and visualization**: Initial React/Vite UI with Tailwind CSS (`botsmith-ui`)
-- **API layer**: FastAPI implementation started
-- **CLI interface**: Basic CLI capabilities
-- Persistent agent memory
-- Advanced visualizations
+- **3-Layer Memory System**: Execution, Session, and Long-Term Persistent memory implemented.
+- **Hybrid Multi-Agent Core**: Fully implemented and end-to-end tested.
+- **Workflow Governance**: Cost estimation, security scanning, and optimization gates active.
+- **API & UI**: FastAPI implementation and React/Vite visualization (`botsmith-ui`) in progress.
+- **Workflow Persistence**: SQLite-backed audit trails and session history functional.
 
 ## Planned
 
-- Dynamic Agent Synthesis
-
-- Role-Based LLM Selection
-
-- Adaptive Workflow Construction
-
-- Human-in-the-Loop Control Gates
-
-- Automated Validation & Debug Loops
-
-- Defensive Security & Safety Checks
-
-- Tool & Agent Registry System
-
-- Execution Transparency & Observability
+- **Dynamic Agent Synthesis**: Auto-generation of specialized agents based on task complexity.
+- **Human-in-the-Loop**: Interactive control gates for high-risk operations.
+- **Adaptive Execution**: Real-time workflow adjustment based on tool feedback.
+- **Advanced visualization**: Enhanced pipeline and agent state monitoring.
 
 ## Project Structure
 

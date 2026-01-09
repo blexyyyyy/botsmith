@@ -12,6 +12,7 @@ const WORKFLOW_STEPS = [
     "generate_all_files",
     "validate_code",
     "security_scan",
+    "optimize_workflow",
     "deployment"
 ];
 

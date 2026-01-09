@@ -105,7 +105,7 @@ def init_project(args):
     from botsmith.tools.filesystem import FileSystemTool
     from botsmith.agents.specialized.project_scaffold_agent import ProjectScaffoldAgent
     
-    name = args.name
+    name = args.name.strip().lower().replace(" ", "_")
     console.print(f"[info]Initializing project: {name}[/info]")
     
     # Use current working directory

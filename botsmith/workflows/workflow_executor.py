@@ -17,7 +17,7 @@ class WorkflowExecutor:
     - Final code writing to botsmith/generated/<project_name>
     """
 
-    GENERATED_ROOT = Path("workspace")
+    GENERATED_ROOT = Path("generated")
 
     def __init__(self, agent_factory, workflow_repo=None):
         self.agent_factory = agent_factory
@@ -135,8 +135,13 @@ class WorkflowExecutor:
         """
 
         project_name = context["project_name"].lower().replace(" ", "_")
-        output_dir = self.GENERATED_ROOT / project_name
-        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        fs = context.get("filesystem")
+        if fs:
+            output_dir = None # We will use fs relative paths
+        else:
+            output_dir = self.GENERATED_ROOT / project_name
+            output_dir.mkdir(parents=True, exist_ok=True)
 
         generated_files = []
         errors = []
@@ -166,6 +171,9 @@ class WorkflowExecutor:
             # Create a clean context for the single file generation
             # Remove 'files' to prevent CodeGeneratorAgent from entering batch mode
             coder_context = context.copy()
+            # Pass file list as project_structure so the coder sees it
+            coder_context["project_structure"] = [f["filename"] for f in context.get("files", [])]
+            
             if "files" in coder_context:
                 del coder_context["files"]
             
@@ -183,8 +191,25 @@ class WorkflowExecutor:
                 continue
 
             # Write code to disk
-            file_path = output_dir / filename
-            file_path.write_text(result["code"], encoding="utf-8")
+            if fs:
+                # FilePlanAgent produces paths like "src/project/main.py"
+                # We need to ensure we write to "{project_name}/{filename}"
+                # But wait! FilePlanAgent output ALREADY contains "src/{project_name}/..."
+                # Only if the filename doesn't start with project_name do we need to care?
+                # Actually, ProjectScaffoldAgent creates "project_name" dir.
+                # If filename is "src/bot/main.py", we want "bot/src/bot/main.py" ??
+                # Let's look at ProjectScaffoldAgent again.
+                # It creates "project_name" directory.
+                # Then "src" inside it.
+                # So "project_name/src/project_name/main.py".
+                # If filename is "src/project_name/main.py", we need "project_name/src/project_name/main.py".
+                full_rel_path = f"{project_name}/{filename}"
+                fs.write_file(full_rel_path, result["code"])
+                file_path = full_rel_path # for logging
+            else:
+                file_path = output_dir / filename
+                file_path.parent.mkdir(parents=True, exist_ok=True)
+                file_path.write_text(result["code"], encoding="utf-8")
 
             generated_files.append({
                 "filename": filename,

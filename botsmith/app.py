@@ -122,9 +122,12 @@ class BotSmithApp:
         fs_root = Path("generated")
         fs = LocalFileSystem(str(fs_root))
 
+        # Sanitize project name: strip trailing spaces, replace spaces with underscores, lowercase
+        sanitized_name = project_name.strip().lower().replace(" ", "_")
+        
         context = {
             "original_request": user_request,
-            "project_name": project_name,
+            "project_name": sanitized_name,
             "dry_run": False,
             "filesystem": fs,
         }

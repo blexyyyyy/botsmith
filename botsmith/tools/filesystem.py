@@ -11,7 +11,11 @@ class FileSystemTool:
         self.base_dir.mkdir(parents=True, exist_ok=True)
 
     def _resolve(self, relative_path: str) -> Path:
-        path = (self.base_dir / relative_path).resolve()
+        # Sanitize path by stripping each component (Windows compatibility)
+        parts = [p.strip() for p in Path(relative_path).parts]
+        sanitized_rel = Path(*parts)
+        
+        path = (self.base_dir / sanitized_rel).resolve()
         if not str(path).startswith(str(self.base_dir)):
             raise ValueError("Path traversal detected")
         return path

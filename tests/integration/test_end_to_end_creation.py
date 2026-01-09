@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Add project root to sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from botsmith.factory.agent_factory import AgentFactory
 from botsmith.persistence.database import init_db
@@ -54,8 +54,8 @@ def test_end_to_end_creation():
     compiler = create_and_save_agent("workflow_compiler", "compiler_main", ["compilation"])
     cost_estimator = create_and_save_agent("cost_estimator", "cost_main", ["cost_estimation"])
     security = create_and_save_agent("security", "sec_main", ["security_scan"])
-    optimizer = create_and_save_agent("workflow_optimizer", "opt_main", ["optimization"])
-    project_scaffold = create_and_save_agent("project_scaffold", "scaffold_main", ["scaffolding"])
+    optimizer = create_and_save_agent("optimizer", "opt_main", ["optimization"])
+    project_scaffold = create_and_save_agent("scaffolder", "scaffold_main", ["scaffolding"])
     
     # Workflow Executor (manual instantiation for repo injection)
     from botsmith.agents.specialized.workflow_executor import WorkflowExecutor
@@ -138,7 +138,7 @@ def test_end_to_end_creation():
 
     # Verifying scaffolding
     project_name = context["project_name"]
-    assert fs.exists(f"{project_name}/src/main.py")
+    assert fs.exists(f"{project_name}/src/{project_name}/main.py")
     assert fs.exists(f"{project_name}/requirements.txt")
     assert fs.exists(f"{project_name}/README.md")
     
