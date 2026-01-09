@@ -1,8 +1,8 @@
 # botsmith/core/memory/sqlite_manager.py
 
 from typing import Optional, Any
-from .models import AgentMemory, MemoryScope, MemoryUpdateProposal
-from .manager import MemoryManager
+from botsmith.core.memory import AgentMemory, MemoryScope, MemoryUpdateProposal
+from botsmith.memory.manager import MemoryManager
 from botsmith.persistence.agent_memory_repository import AgentMemoryRepository
 
 

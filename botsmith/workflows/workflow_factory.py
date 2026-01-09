@@ -50,6 +50,16 @@ class WorkflowFactory:
         })
         order += 1
 
+        # Governance: Cost Estimation
+        steps.append({
+            "order": order,
+            "step": "cost_estimation",
+            "agent": "cost_estimator",
+            "retry": 1,
+            "on_failure": "abort"
+        })
+        order += 1
+
         # File planning MUST come before any codegen
         steps.append({
             "order": order,

@@ -4,14 +4,10 @@ from typing import Dict, Any, List
 from pathlib import Path
 from botsmith.config import settings
 
-from botsmith.core.utils.config_loader import ConfigLoader
-from botsmith.core.memory.manager import InMemoryMemoryManager
-from botsmith.core.memory.sqlite_manager import SQLiteMemoryManager
+from botsmith.utils.config_loader import ConfigLoader
+from botsmith.memory import MemoryManager, SQLiteMemoryManager
 
-from botsmith.core.llm.llm_router import LLMRouter
-from botsmith.core.llm.wrapper import OllamaLLM
-from botsmith.core.llm.gemini import GeminiLLM
-from botsmith.core.llm.groq import GroqLLM
+from botsmith.llm import LLMRouter, OllamaLLM, GeminiLLM, GroqLLM
 
 from botsmith.factory.agent_factory import AgentFactory
 from botsmith.workflows.workflow_executor import WorkflowExecutor
@@ -50,7 +46,7 @@ class BotSmithApp:
                 db_path=self.config.sqlite_memory_path
             )
         else:
-            self.memory_manager = InMemoryMemoryManager()
+            self.memory_manager = MemoryManager()
 
         # -------------------------
         # LLM Setup (Router)
@@ -115,7 +111,7 @@ class BotSmithApp:
         3. Return results + generated files
         """
 
-        from botsmith.core.utils.filesystem import LocalFileSystem
+        from botsmith.utils.filesystem import LocalFileSystem
         
         # Determine output root. For dev, relative to CWD/generated
         # or use a configured path.

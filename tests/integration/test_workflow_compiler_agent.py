@@ -6,14 +6,14 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
 
 from botsmith.factory.agent_factory import AgentFactory
-from botsmith.core.memory.manager import InMemoryMemoryManager
-from botsmith.core.llm.wrapper import OllamaLLM
+from botsmith.memory import MemoryManager
+from botsmith.llm.wrapper import OllamaLLM
 import botsmith.agents
 
 
 def test_workflow_compiler_agent():
     llm = OllamaLLM()
-    mm = InMemoryMemoryManager()
+    mm = MemoryManager()
     factory = AgentFactory(llm, mm)
 
     compiler = factory.create_agent({
@@ -41,7 +41,7 @@ def test_workflow_compiler_agent():
 
 def test_compiler_invariant():
     llm = OllamaLLM()
-    mm = InMemoryMemoryManager()
+    mm = MemoryManager()
     factory = AgentFactory(llm, mm)
 
     compiler = factory.create_agent({

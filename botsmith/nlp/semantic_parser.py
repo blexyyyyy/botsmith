@@ -1,5 +1,5 @@
 import json
-from botsmith.core.llm.wrapper import ILLMWrapper
+from botsmith.core.interfaces.llm_interface import ILLMWrapper
 
 
 class SemanticParser:

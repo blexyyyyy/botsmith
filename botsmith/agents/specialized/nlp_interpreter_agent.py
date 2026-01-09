@@ -1,4 +1,4 @@
-from botsmith.core.base.agent import BaseAgent
+from botsmith.agents.base_agent import BaseAgent
 from botsmith.nlp.semantic_parser import SemanticParser
 from botsmith.nlp.intent_normalizer import IntentNormalizer
 

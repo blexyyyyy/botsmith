@@ -1,7 +1,7 @@
 # botsmith/core/memory/memory_policy.py
 
 from typing import Any, Dict, Optional
-from .models import MemoryScope, MemoryUpdateProposal
+from botsmith.core.memory import MemoryScope, MemoryUpdateProposal
 
 
 class MemoryPolicy:

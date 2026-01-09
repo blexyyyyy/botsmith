@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from typing import Any, Dict
-from ..memory.models import MemoryScope
+from botsmith.core.memory.models import MemoryScope
 
 
 class MemoryStore(ABC):

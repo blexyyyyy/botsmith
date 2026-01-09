@@ -5,17 +5,17 @@ from unittest.mock import MagicMock, patch
 # Create relative path to the root context
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
 
-from botsmith.core.base.autogen_agent import AutoGenAgent
-from botsmith.core.memory.manager import InMemoryMemoryManager
+from botsmith.agents.autogen_agent import AutoGenAgent
+from botsmith.memory import MemoryManager
 from botsmith.workflows.workflow_factory import WorkflowFactory
 from botsmith.workflows.workflow_executor import WorkflowExecutor
 from botsmith.factory.agent_factory import AgentFactory
-from botsmith.core.llm.wrapper import OllamaLLM
+from botsmith.llm.wrapper import OllamaLLM
 
 def test_workflow_execution():
     # Setup dependencies
     llm = OllamaLLM()
-    mm = InMemoryMemoryManager()
+    mm = MemoryManager()
     agent_factory = AgentFactory(llm, mm)
     
     # Create agents

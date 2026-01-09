@@ -1,18 +1,18 @@
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[4]
+ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from botsmith.factory.agent_factory import AgentFactory
-from botsmith.core.memory.manager import InMemoryMemoryManager
-from botsmith.core.llm.wrapper import OllamaLLM
+from botsmith.memory import MemoryManager
+from botsmith.llm.wrapper import OllamaLLM
 import botsmith.agents
 
 
 llm = OllamaLLM()
-mm = InMemoryMemoryManager()
+mm = MemoryManager()
 factory = AgentFactory(llm, mm)
 
 workflow_steps = [
@@ -26,7 +26,7 @@ context = {
     "budget": 10.0,
 }
 
-optimizer = factory.create_agent({"type": "workflow_optimizer", "params": {"agent_id": "opt"}})
+optimizer = factory.create_agent({"type": "optimizer", "params": {"agent_id": "opt"}})
 coster = factory.create_agent({"type": "cost_estimator", "params": {"agent_id": "cost"}})
 security = factory.create_agent({"type": "security", "params": {"agent_id": "sec"}})
 

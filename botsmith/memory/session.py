@@ -1,8 +1,8 @@
 # botsmith/core/memory/session_memory.py
 
 from typing import Any, Dict
-from ..interfaces.memory_store import MemoryStore
-from .models import MemoryScope
+from botsmith.core.interfaces.memory_store import MemoryStore
+from botsmith.core.memory import MemoryScope
 
 
 class SessionMemory(MemoryStore):

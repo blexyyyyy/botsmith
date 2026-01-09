@@ -5,13 +5,13 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
 
 from botsmith.factory.agent_factory import AgentFactory
-from botsmith.core.memory.manager import InMemoryMemoryManager
-from botsmith.core.llm.wrapper import OllamaLLM
+from botsmith.memory import MemoryManager
+from botsmith.llm.wrapper import OllamaLLM
 import botsmith.agents
 
 if __name__ == "__main__":
     llm = OllamaLLM()
-    mm = InMemoryMemoryManager()
+    mm = MemoryManager()
     factory = AgentFactory(llm, mm)
 
     planner = factory.create_agent({

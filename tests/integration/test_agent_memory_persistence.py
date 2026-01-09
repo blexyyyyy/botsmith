@@ -2,9 +2,9 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
 
-from botsmith.core.memory.sqlite_manager import SQLiteMemoryManager
+from botsmith.memory import SQLiteMemoryManager
 from botsmith.factory.agent_factory import AgentFactory
-from botsmith.core.llm.wrapper import OllamaLLM
+from botsmith.llm import OllamaLLM
 import botsmith.agents
 from botsmith.persistence.database import init_db
 
@@ -46,8 +46,14 @@ def test_agent_memory_persists_across_instances():
     })
 
 
-    memory = agent2._memory
-    assert len(memory.interactions) > 0
+    # STEP 2.3: Assert Against Project Memory via MemoryManager
+    from botsmith.core.memory import MemoryScope
+    
+    project_store = mm2.get_store(MemoryScope.PROJECT)
+    interaction = project_store.read("interaction_1")
+    
+    assert interaction is not None
+    assert interaction["task"] == "test task"
     print("Test Passed!")
 
 if __name__ == "__main__":

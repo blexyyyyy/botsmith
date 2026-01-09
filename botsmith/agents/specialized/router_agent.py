@@ -1,5 +1,5 @@
 from typing import Dict, Any
-from botsmith.core.base.agent import BaseAgent
+from botsmith.agents.base_agent import BaseAgent
 from botsmith.agents.specialized.nlp_interpreter_agent import NLPInterpreterAgent
 
 

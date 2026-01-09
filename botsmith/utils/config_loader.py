@@ -3,7 +3,7 @@
 import importlib.util
 from pathlib import Path
 from typing import Any
-from ..exceptions.custom_exceptions import ConfigurationError
+from botsmith.core.exceptions.custom_exceptions import ConfigurationError
 
 
 class ConfigLoader:

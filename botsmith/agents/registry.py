@@ -17,7 +17,7 @@ from botsmith.agents.specialized.security_agent import SecurityAgent
 from botsmith.agents.specialized.cost_estimator_agent import CostEstimatorAgent
 from botsmith.agents.specialized.router_agent import RouterAgent
 from botsmith.agents.specialized.workflow_compiler_agent import WorkflowCompilerAgent
-from botsmith.core.base.autogen_agent import AutoGenAgent
+from botsmith.agents.autogen_agent import AutoGenAgent
 
 
 class AgentRegistry:

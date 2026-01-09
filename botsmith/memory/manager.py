@@ -2,12 +2,12 @@
 
 import json
 from typing import Dict, Optional, Any
-from .models import AgentMemory, MemoryScope, MemoryUpdateProposal
-from .memory_policy import MemoryPolicy
-from .session_memory import SessionMemory
-from .long_term_memory import PreferenceMemory, KnowledgeMemory
-from ..interfaces.memory_interface import IMemoryManager
-from ..interfaces.memory_store import MemoryStore
+from botsmith.core.memory import AgentMemory, MemoryScope, MemoryUpdateProposal
+from botsmith.memory.memory_policy import MemoryPolicy
+from botsmith.memory.session import SessionMemory
+from botsmith.memory.long_term import PreferenceMemory, KnowledgeMemory
+from botsmith.core.interfaces.memory_interface import IMemoryManager
+from botsmith.core.interfaces.memory_store import MemoryStore
 from botsmith.persistence.agent_memory_repository import AgentMemoryRepository
 
 
@@ -29,6 +29,9 @@ class MemoryManager(IMemoryManager):
             MemoryScope.USER: self.preference,
             MemoryScope.PROJECT: self.knowledge
         }
+
+    def get_store(self, scope: MemoryScope) -> MemoryStore:
+        return self._stores.get(scope)
 
     def propose(self, proposal: MemoryUpdateProposal) -> bool:
         """

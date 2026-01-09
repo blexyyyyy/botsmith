@@ -1,7 +1,9 @@
 import sqlite3
 from pathlib import Path
 
-DB_PATH = Path(__file__).resolve().parent / "botsmith.db"
+from botsmith.config import settings
+
+DB_PATH = settings.sqlite_memory_path
 
 
 def get_connection(db_path=None):

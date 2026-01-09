@@ -2,8 +2,8 @@
 
 from typing import Any, Dict, Optional
 from datetime import datetime
-from ..interfaces.memory_store import MemoryStore
-from .models import MemoryScope
+from botsmith.core.interfaces.memory_store import MemoryStore
+from botsmith.core.memory import MemoryScope
 
 
 class PersistentStore(MemoryStore):

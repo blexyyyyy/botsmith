@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from typing import Optional, Any
-from ..memory.models import AgentMemory, MemoryScope, MemoryUpdateProposal
+from botsmith.core.memory.models import AgentMemory, MemoryScope, MemoryUpdateProposal
 
 
 class IMemoryManager(ABC):

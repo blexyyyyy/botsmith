@@ -2,8 +2,8 @@
 
 import os
 from groq import Groq
-from ..interfaces.llm_interface import ILLMWrapper
-from ..exceptions.custom_exceptions import LLMUnavailableError
+from botsmith.core.interfaces.llm_interface import ILLMWrapper
+from botsmith.core.exceptions.custom_exceptions import LLMUnavailableError
 
 
 class GroqLLM(ILLMWrapper):

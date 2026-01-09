@@ -6,8 +6,8 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
 
 from botsmith.factory.agent_factory import AgentFactory
-from botsmith.core.memory.manager import InMemoryMemoryManager
-from botsmith.core.llm.wrapper import OllamaLLM
+from botsmith.memory import MemoryManager
+from botsmith.llm.wrapper import OllamaLLM
 import botsmith.agents  # forces registration
 from botsmith.agents.registry import AgentRegistry # explicit import to check
 
@@ -23,9 +23,9 @@ def test_factory():
         cfg = json.load(f)
 
     llm = OllamaLLM()
-    mm = InMemoryMemoryManager()
+    mm = MemoryManager()
 
-    factory = AgentFactory(llm=llm, memory_manager=mm)
+    factory = AgentFactory(local_llm=llm, memory_manager=mm)
 
     print(f"Creating agent of type: {cfg['agents'][0]['type']}")
     agent = factory.create_agent(cfg["agents"][0])

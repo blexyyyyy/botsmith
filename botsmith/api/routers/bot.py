@@ -47,7 +47,7 @@ async def download_bot(project_name: str, app: BotSmithApp = Depends(get_botsmit
     Download the generated bot as a ZIP file.
     """
     from botsmith.api.utils.archiver import zip_project
-    from botsmith.core.utils.filesystem import LocalFileSystem
+    from botsmith.utils.filesystem import LocalFileSystem
     from pathlib import Path
     
     # Locate project - align with WorkflowExecutor logic

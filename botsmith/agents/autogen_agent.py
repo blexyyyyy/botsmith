@@ -11,10 +11,10 @@ except ImportError:
     ConversableAgent = None
     UserProxyAgent = None
 
-from ..exceptions.custom_exceptions import AgentExecutionError
-from ..interfaces.agent_interface import IAgent
-from ..interfaces.memory_interface import IMemoryManager
-from ..memory.models import AgentMemory
+from botsmith.core.exceptions.custom_exceptions import AgentExecutionError
+from botsmith.core.interfaces.agent_interface import IAgent
+from botsmith.core.interfaces.memory_interface import IMemoryManager
+from botsmith.core.memory.models import AgentMemory
 
 
 class AutoGenAgent(IAgent):
@@ -29,6 +29,7 @@ class AutoGenAgent(IAgent):
         system_message: str,
         llm_config: Dict[str, Any],
         memory_manager: IMemoryManager,
+        llm: Any = None,
         agent_type: str = "conversable",
         capabilities: List[str] | None = None,
     ):

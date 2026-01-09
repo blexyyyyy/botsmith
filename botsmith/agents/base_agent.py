@@ -2,12 +2,11 @@
 
 from typing import Dict, Any, List
 from abc import ABC
-from ..interfaces.agent_interface import IAgent
-from ..interfaces.llm_interface import ILLMWrapper
-from ..interfaces.memory_interface import IMemoryManager
-from ..exceptions.custom_exceptions import AgentExecutionError
-from ..memory.models import AgentMemory, MemoryUpdateProposal, MemoryScope
-from ..memory.execution_context import ExecutionContext
+from botsmith.core.interfaces.agent_interface import IAgent
+from botsmith.core.interfaces.llm_interface import ILLMWrapper
+from botsmith.core.interfaces.memory_interface import IMemoryManager
+from botsmith.core.exceptions.custom_exceptions import AgentExecutionError
+from botsmith.core.memory import AgentMemory, MemoryUpdateProposal, MemoryScope, ExecutionContext
 
 
 class BaseAgent(IAgent, ABC):
@@ -94,7 +93,7 @@ class BaseAgent(IAgent, ABC):
                 },
                 confidence=1.0, # High confidence in own record
                 justification="Agent execution log",
-                suggested_scope=MemoryScope.SESSION,
+                suggested_scope=MemoryScope.PROJECT,
                 source=f"agent:{self.agent_id}"
             )
             self._memory_manager.propose(proposal)

@@ -13,8 +13,8 @@ from botsmith.factory.agent_factory import AgentFactory
 from botsmith.persistence.database import init_db
 from botsmith.persistence.repository import WorkflowRepository, AgentRepository
 from botsmith.persistence.models import AgentRecord
-from botsmith.core.memory.sqlite_manager import SQLiteMemoryManager
-from botsmith.core.llm.wrapper import OllamaLLM
+from botsmith.memory.sqlite_manager import SQLiteMemoryManager
+from botsmith.llm.wrapper import OllamaLLM
 from botsmith.tools.filesystem import FileSystemTool
 import botsmith.agents
 

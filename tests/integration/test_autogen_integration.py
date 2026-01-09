@@ -1,5 +1,5 @@
-from botsmith.core.base.autogen_agent import AutoGenAgent
-from botsmith.core.memory.manager import InMemoryMemoryManager
+from botsmith.agents.autogen_agent import AutoGenAgent
+from botsmith.memory import MemoryManager
 from unittest.mock import patch
 from autogen import ConversableAgent # Assuming ConversableAgent is needed for patching
 
@@ -9,7 +9,7 @@ llm_config = {
     "api_key": "ollama",
 }
 
-mm = InMemoryMemoryManager()
+mm = MemoryManager()
 
 agent = AutoGenAgent(
     agent_id="auto_1",

@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 from typing import Optional, Dict, Any, List
 
-from botsmith.core.memory.models import AgentMemory, MemoryScope
+from botsmith.core.memory import AgentMemory, MemoryScope
 from botsmith.persistence.database import get_connection
 
 
